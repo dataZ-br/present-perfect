@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Present Perfect Interactive Homework</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Tone.js for soft auditory cues -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
+  <!-- Canvas Confetti for completion celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between selection:bg-blue-100 selection:text-blue-900">
+
+  <!-- Main Container -->
+  <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 py-6 md:py-10 flex-grow">
+    
+    <!-- Header Banner -->
+    <header class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 mb-8 relative overflow-hidden">
+      <div class="absolute -top-12 -right-12 w-48 h-48 bg-blue-100/60 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="absolute -bottom-8 -left-8 w-40 h-40 bg-indigo-100/60 rounded-full blur-xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-blue-50 text-blue-600 border border-blue-200/60 mb-2.5">
+            <i class="fa-solid fa-graduation-cap"></i> Part 5 • Homework Practice
+          </span>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Present Perfect Tense</h1>
+          <p class="text-sm sm:text-base text-slate-500 mt-1 max-w-xl">
+            Reinforce auxiliary verbs (<em>have / has</em>), past participles, and time expressions (<em>for / since</em>).
+          </p>
+        </div>
+
+        <!-- Live Score & Progress -->
+        <div class="flex items-center gap-4 bg-slate-50 border border-slate-200/80 rounded-2xl p-4 self-start md:self-auto min-w-[200px]">
+          <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-blue-500/20">
+            <span id="current-score">0</span>
+          </div>
+          <div>
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Score</div>
+            <div class="text-slate-800 font-bold text-sm"><span id="correct-count">0</span> of 13 Completed</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="mt-6">
+        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden border border-slate-200/50">
+          <div id="progress-bar-fill" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2.5 rounded-full w-0 transition-all duration-500 ease-out"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Sections -->
+    <main class="space-y-8">
+      
+      <!-- Section 1: Choose the correct alternative -->
+      <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-200/70 text-indigo-600 flex items-center justify-center font-bold text-sm">
+            8
+          </div>
+          <div>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">Choose the correct alternative</h2>
+            <p class="text-xs sm:text-sm text-slate-500">Tap or click the option that best completes each sentence.</p>
+          </div>
+        </div>
+
+        <div id="mc-container" class="space-y-4">
+          <!-- Dynamically populated multiple choice items -->
+        </div>
+      </section>
+
+      <!-- Section 2: Write complete sentences -->
+      <section class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-xl bg-indigo-50 border border-indigo-200/70 text-indigo-600 flex items-center justify-center font-bold text-sm">
+            9
+          </div>
+          <div>
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">Write complete sentences</h2>
+            <p class="text-xs sm:text-sm text-slate-500">Form full Present Perfect sentences using the prompts with <em>for</em> or <em>since</em> where applicable.</p>
+          </div>
+        </div>
+
+        <div id="sentence-container" class="space-y-6">
+          <!-- Dynamically populated sentence items -->
+        </div>
+      </section>
+
+      <!-- Actions Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-4">
+        <button id="reset-btn" class="px-5 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 active:scale-[0.98] text-slate-600 font-semibold text-sm transition-all flex items-center gap-2 shadow-sm">
+          <i class="fa-solid fa-arrow-rotate-left text-slate-400"></i> Reset Homework
+        </button>
+
+        <button id="check-all-btn" class="px-6 py-3 rounded-2xl bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-semibold text-sm transition-all flex items-center gap-2 shadow-md shadow-blue-500/25">
+          <i class="fa-solid fa-circle-check"></i> Check All Answers
+        </button>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-12 py-6 border-t border-slate-200/70 bg-white text-center text-xs text-slate-400">
+    <p>English Language Learning Lab • Present Perfect Practice Module</p>
+  </footer>
+
+  <!-- Modal / Floating Notification for Complete Success -->
+  <div id="celebration-banner" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden opacity-0 transition-opacity duration-300">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 text-center transform scale-95 transition-transform duration-300" id="celebration-box">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-2xl mx-auto mb-4">
+        <i class="fa-solid fa-trophy"></i>
+      </div>
+      <h3 class="text-2xl font-extrabold text-slate-900">Outstanding Work!</h3>
+      <p class="text-slate-500 text-sm mt-2">You've successfully solved all the exercises with 100% accuracy!</p>
+      
+      <div class="bg-slate-50 rounded-2xl p-4 my-6 border border-slate-100 flex items-center justify-around">
+        <div>
+          <span class="block text-2xl font-bold text-slate-800">13 / 13</span>
+          <span class="text-xs uppercase text-slate-400 font-semibold">Total Correct</span>
+        </div>
+        <div class="h-8 w-[1px] bg-slate-200"></div>
+        <div>
+          <span class="block text-2xl font-bold text-emerald-600">100%</span>
+          <span class="text-xs uppercase text-slate-400 font-semibold">Mastery</span>
+        </div>
+      </div>
+
+      <button id="close-modal-btn" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-semibold rounded-2xl shadow-lg shadow-blue-500/25 transition-all text-sm">
+        Review My Work
+      </button>
+    </div>
+  </div>
+
+  <!-- Application Logic -->
+  <script>
+    // --- Data Definitions ---
+    const activity1Data = [
+      {
+        id: "mc-1",
+        pre: "People",
+        options: ["have", "has"],
+        post: "played games for centuries.",
+        correct: "have"
+      },
+      {
+        id: "mc-2",
+        pre: "She has",
+        options: ["enjoy", "enjoyed"],
+        post: "this activity for years.",
+        correct: "enjoyed"
+      },
+      {
+        id: "mc-3",
+        pre: "He",
+        options: ["have", "has"],
+        post: "lived here since 2020.",
+        correct: "has"
+      },
+      {
+        id: "mc-4",
+        pre: "They have played football",
+        options: ["for", "since"],
+        post: "five years.",
+        correct: "for"
+      },
+      {
+        id: "mc-5",
+        pre: "I have studied English",
+        options: ["for", "since"],
+        post: "I was seven.",
+        correct: "since"
+      },
+      {
+        id: "mc-6",
+        pre: "Video games have",
+        options: ["become", "became"],
+        post: "very popular.",
+        correct: "become"
+      },
+      {
+        id: "mc-7",
+        pre: "My friends haven't",
+        options: ["played", "play"],
+        post: "board games recently.",
+        correct: "played"
+      },
+      {
+        id: "mc-8",
+        pre: "This game has",
+        options: ["changed", "change"],
+        post: "over time.",
+        correct: "changed"
+      }
+    ];
+
+    const activity2Data = [
+      {
+        id: "sent-1",
+        prompt: "Lucas / play football / five years.",
+        accepted: [
+          "Lucas has played football for five years.",
+          "Lucas has played football for five years"
+        ],
+        hint: "Lucas + has + past participle + for five years."
+      },
+      {
+        id: "sent-2",
+        prompt: "My parents / live in this city / 2018.",
+        accepted: [
+          "My parents have lived in this city since 2018.",
+          "My parents have lived in this city since 2018"
+        ],
+        hint: "My parents (they) + have + past participle + since 2018."
+      },
+      {
+        id: "sent-3",
+        prompt: "People / enjoy music / thousands of years.",
+        accepted: [
+          "People have enjoyed music for thousands of years.",
+          "People have enjoyed music for thousands of years"
+        ],
+        hint: "People (plural) + have + enjoyed music + for thousands of years."
+      },
+      {
+        id: "sent-4",
+        prompt: "She / study English / three years.",
+        accepted: [
+          "She has studied English for three years.",
+          "She has studied English for three years"
+        ],
+        hint: "She + has + studied (y becomes ied) + for three years."
+      },
+      {
+        id: "sent-5",
+        prompt: "Video games / change / over time.",
+        accepted: [
+          "Video games have changed over time.",
+          "Video games have changed over time"
+        ],
+        hint: "Video games (plural) + have + changed + over time."
+      }
+    ];
+
+    // State tracking
+    const state = {
+      mcSelections: {},
+      sentenceInputs: {}
+    };
+
+    let synth = null;
+
+    // Initialize Tone.js sounds on user interaction
+    function playAudioTone(type) {
+      try {
+        if (!synth) {
+          synth = new Tone.PolySynth(Tone.Synth).toDestination();
+          synth.volume.value = -12;
+        }
+        if (Tone.context.state !== 'running') {
+          Tone.start();
+        }
+
+        if (type === 'success') {
+          synth.triggerAttackRelease(['E5', 'G#5', 'B5'], '8n');
+        } else if (type === 'error') {
+          synth.triggerAttackRelease(['D3', 'C#3'], '16n');
+        } else if (type === 'click') {
+          synth.triggerAttackRelease('C5', '32n');
+        }
+      } catch (e) {
+        // Audio policy or fallback
+      }
+    }
+
+    // --- Render Section 1 ---
+    function renderMC() {
+      const container = document.getElementById('mc-container');
+      container.innerHTML = '';
+
+      activity1Data.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = "flex flex-wrap items-center gap-2 p-3.5 rounded-2xl border border-slate-100 bg-slate-50/60 hover:bg-slate-50 transition-colors";
+        row.id = `row-${item.id}`;
+
+        const indexBadge = `<span class="text-xs font-bold text-slate-400 mr-1">${index + 1}.</span>`;
+        const preText = item.pre ? `<span class="text-slate-700 text-sm sm:text-base font-medium">${item.pre}</span>` : '';
+        const postText = item.post ? `<span class="text-slate-700 text-sm sm:text-base font-medium">${item.post}</span>` : '';
+
+        const buttonsGroup = document.createElement('div');
+        buttonsGroup.className = "inline-flex items-center p-1 bg-white border border-slate-200 rounded-xl shadow-xs gap-1";
+
+        item.options.forEach(option => {
+          const btn = document.createElement('button');
+          btn.type = "button";
+          btn.dataset.itemId = item.id;
+          btn.dataset.option = option;
+          btn.innerText = option;
+          btn.className = "px-3 py-1 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-150 text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+          
+          btn.addEventListener('click', () => {
+            selectOption(item.id, option);
+            playAudioTone('click');
+          });
+
+          buttonsGroup.appendChild(btn);
+        });
+
+        // Status indicator
+        const indicator = document.createElement('div');
+        indicator.id = `status-${item.id}`;
+        indicator.className = "ml-auto text-xs font-semibold px-2 py-0.5 rounded-full hidden items-center gap-1";
+
+        row.innerHTML = indexBadge + preText;
+        row.appendChild(buttonsGroup);
+        if (postText) {
+          const postSpan = document.createElement('span');
+          postSpan.innerHTML = postText;
+          row.appendChild(postSpan);
+        }
+        row.appendChild(indicator);
+
+        container.appendChild(row);
+      });
+    }
+
+    // --- Render Section 2 ---
+    function renderSentences() {
+      const container = document.getElementById('sentence-container');
+      container.innerHTML = '';
+
+      activity2Data.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-slate-50/40 relative";
+        card.id = `card-${item.id}`;
+
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-400">${index + 1}.</span>
+              <span class="text-xs sm:text-sm font-semibold uppercase tracking-wider text-slate-500">Prompt:</span>
+              <span class="text-slate-800 font-semibold text-sm sm:text-base">${item.prompt}</span>
+            </div>
+            <button type="button" class="hint-toggle-btn text-xs text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1 self-start sm:self-auto" data-target="hint-${item.id}">
+              <i class="fa-regular fa-lightbulb"></i> Hint
+            </button>
+          </div>
+
+          <div id="hint-${item.id}" class="hidden my-2 p-2.5 bg-amber-50 border border-amber-200/60 rounded-xl text-xs text-amber-800">
+            <strong>Hint:</strong> ${item.hint}
+          </div>
+
+          <div class="mt-3 flex flex-col sm:flex-row gap-2">
+            <div class="relative flex-grow">
+              <input 
+                type="text" 
+                id="input-${item.id}" 
+                placeholder="Type the complete sentence here..." 
+                autocomplete="off"
+                class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm sm:text-base text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 shadow-xs"
+              />
+            </div>
+            <button type="button" class="check-single-btn px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm rounded-xl transition-all shadow-xs shrink-0 active:scale-95" data-id="${item.id}">
+              Check
+            </button>
+          </div>
+
+          <div id="feedback-${item.id}" class="mt-2 text-xs font-medium flex items-center gap-1.5 hidden">
+            <!-- Injected dynamically -->
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      // Attach event listeners for hint toggles
+      document.querySelectorAll('.hint-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const targetId = btn.dataset.target;
+          const hintEl = document.getElementById(targetId);
+          hintEl.classList.toggle('hidden');
+        });
+      });
+
+      // Attach single check buttons
+      document.querySelectorAll('.check-single-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.dataset.id;
+          validateSingleSentence(id, true);
+        });
+      });
+
+      // Enter key check
+      activity2Data.forEach(item => {
+        const inp = document.getElementById(`input-${item.id}`);
+        inp.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            validateSingleSentence(item.id, true);
+          }
+        });
+      });
+    }
+
+    // --- Selection Handler for MC ---
+    function selectOption(itemId, selectedOption) {
+      state.mcSelections[itemId] = selectedOption;
+
+      // Update UI button styles
+      const itemRow = document.getElementById(`row-${itemId}`);
+      const buttons = itemRow.querySelectorAll('button[data-item-id]');
+      
+      buttons.forEach(btn => {
+        if (btn.dataset.option === selectedOption) {
+          btn.className = "px-3 py-1 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-150 bg-blue-600 text-white shadow-xs";
+        } else {
+          btn.className = "px-3 py-1 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-150 text-slate-600 hover:text-slate-900 hover:bg-slate-100";
+        }
+      });
+
+      // Instant soft evaluation indicator
+      evaluateSingleMC(itemId, false);
+      updateOverallScore();
+    }
+
+    function evaluateSingleMC(itemId, showAudio = false) {
+      const item = activity1Data.find(d => d.id === itemId);
+      const selected = state.mcSelections[itemId];
+      const indicator = document.getElementById(`status-${itemId}`);
+      const row = document.getElementById(`row-${itemId}`);
+
+      if (!selected) {
+        indicator.className = "ml-auto text-xs font-semibold px-2 py-0.5 rounded-full hidden";
+        return false;
+      }
+
+      const isCorrect = (selected.toLowerCase() === item.correct.toLowerCase());
+
+      indicator.classList.remove('hidden');
+      if (isCorrect) {
+        indicator.className = "ml-auto text-xs font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200/60";
+        indicator.innerHTML = '<i class="fa-solid fa-check"></i> Correct';
+        row.classList.remove('border-rose-200', 'bg-rose-50/20');
+        row.classList.add('border-emerald-200/60', 'bg-emerald-50/20');
+        if (showAudio) playAudioTone('success');
+        return true;
+      } else {
+        indicator.className = "ml-auto text-xs font-semibold px-2.5 py-1 rounded-full inline-flex items-center gap-1 bg-rose-50 text-rose-700 border border-rose-200/60";
+        indicator.innerHTML = '<i class="fa-solid fa-xmark"></i> Try again';
+        row.classList.remove('border-emerald-200/60', 'bg-emerald-50/20');
+        row.classList.add('border-rose-200', 'bg-rose-50/20');
+        if (showAudio) playAudioTone('error');
+        return false;
+      }
+    }
+
+    // --- Validation for Sentence Writing ---
+    function normalizeSentence(str) {
+      if (!str) return '';
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, ' ')
+        .replace(/[.?!]$/, ''); // Strip trailing punctuation for flexible matching
+    }
+
+    function validateSingleSentence(itemId, playSound = false) {
+      const item = activity2Data.find(d => d.id === itemId);
+      const inputEl = document.getElementById(`input-${itemId}`);
+      const feedbackEl = document.getElementById(`feedback-${itemId}`);
+      const card = document.getElementById(`card-${itemId}`);
+      const userText = inputEl.value;
+
+      state.sentenceInputs[itemId] = userText;
+
+      const normUser = normalizeSentence(userText);
+      if (!normUser) {
+        feedbackEl.classList.remove('hidden');
+        feedbackEl.className = "mt-2 text-xs font-medium text-amber-700 flex items-center gap-1";
+        feedbackEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Please write an answer before checking.';
+        return false;
+      }
+
+      // Check against acceptable answers
+      const isCorrect = item.accepted.some(acc => normalizeSentence(acc) === normUser);
+
+      feedbackEl.classList.remove('hidden');
+      if (isCorrect) {
+        feedbackEl.className = "mt-2 text-xs font-medium text-emerald-700 flex items-center gap-1.5";
+        feedbackEl.innerHTML = '<i class="fa-solid fa-circle-check"></i> Excellent! Grammatically complete and accurate.';
+        inputEl.className = "w-full bg-white border border-emerald-400 ring-2 ring-emerald-500/10 rounded-xl px-3.5 py-2.5 text-sm sm:text-base text-slate-800 focus:outline-none transition-all";
+        card.classList.remove('border-rose-200');
+        card.classList.add('border-emerald-200');
+        if (playSound) playAudioTone('success');
+        updateOverallScore();
+        return true;
+      } else {
+        feedbackEl.className = "mt-2 text-xs font-medium text-rose-600 flex items-center gap-1.5";
+        feedbackEl.innerHTML = `<span><i class="fa-solid fa-circle-xmark"></i> Not quite. Check your verb form and spelling.</span>`;
+        inputEl.className = "w-full bg-white border border-rose-300 ring-2 ring-rose-500/10 rounded-xl px-3.5 py-2.5 text-sm sm:text-base text-slate-800 focus:outline-none transition-all";
+        card.classList.remove('border-emerald-200');
+        card.classList.add('border-rose-200');
+        if (playSound) playAudioTone('error');
+        updateOverallScore();
+        return false;
+      }
+    }
+
+    // --- Score Calculation & Visual Updates ---
+    function updateOverallScore() {
+      let correctTotal = 0;
+      const grandTotal = activity1Data.length + activity2Data.length;
+
+      // Evaluate MC
+      activity1Data.forEach(item => {
+        const val = state.mcSelections[item.id];
+        if (val && val.toLowerCase() === item.correct.toLowerCase()) {
+          correctTotal++;
+        }
+      });
+
+      // Evaluate Sentences
+      activity2Data.forEach(item => {
+        const inputEl = document.getElementById(`input-${item.id}`);
+        const text = inputEl ? inputEl.value : '';
+        const norm = normalizeSentence(text);
+        if (item.accepted.some(acc => normalizeSentence(acc) === norm)) {
+          correctTotal++;
+        }
+      });
+
+      // Update counters
+      document.getElementById('current-score').innerText = Math.round((correctTotal / grandTotal) * 100) + '%';
+      document.getElementById('correct-count').innerText = correctTotal;
+
+      const percentage = (correctTotal / grandTotal) * 100;
+      document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+
+      return { correctTotal, grandTotal };
+    }
+
+    // --- Check All Action ---
+    function checkAllAnswers() {
+      let allCorrect = true;
+
+      // Check MC
+      activity1Data.forEach(item => {
+        const correct = evaluateSingleMC(item.id, false);
+        if (!correct) allCorrect = false;
+      });
+
+      // Check Sentences
+      activity2Data.forEach(item => {
+        const correct = validateSingleSentence(item.id, false);
+        if (!correct) allCorrect = false;
+      });
+
+      const { correctTotal, grandTotal } = updateOverallScore();
+
+      if (correctTotal === grandTotal) {
+        playAudioTone('success');
+        triggerCelebration();
+      } else {
+        playAudioTone('error');
+      }
+    }
+
+    // --- Celebration Confetti ---
+    function triggerCelebration() {
+      try {
+        confetti({
+          particleCount: 120,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      } catch(e) {}
+
+      const modal = document.getElementById('celebration-banner');
+      const box = document.getElementById('celebration-box');
+      modal.classList.remove('hidden');
+      setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        box.classList.remove('scale-95');
+      }, 20);
+    }
+
+    // --- Reset ---
+    function resetActivity() {
+      state.mcSelections = {};
+      state.sentenceInputs = {};
+
+      renderMC();
+      renderSentences();
+      updateOverallScore();
+
+      const modal = document.getElementById('celebration-banner');
+      modal.classList.add('opacity-0');
+      document.getElementById('celebration-box').classList.add('scale-95');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+    }
+
+    // --- Init ---
+    window.onload = function() {
+      renderMC();
+      renderSentences();
+
+      document.getElementById('check-all-btn').addEventListener('click', checkAllAnswers);
+      document.getElementById('reset-btn').addEventListener('click', resetActivity);
+
+      document.getElementById('close-modal-btn').addEventListener('click', () => {
+        const modal = document.getElementById('celebration-banner');
+        modal.classList.add('opacity-0');
+        setTimeout(() => modal.classList.add('hidden'), 300);
+      });
+    };
+  </script>
+</body>
+</html>
